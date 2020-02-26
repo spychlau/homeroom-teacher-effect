@@ -1,0 +1,25 @@
+---
+title: "Welcome to My Data Management Blog"
+description: |
+  Welcome to my data management blog. 
+author:
+  - name: Claire Congli Zhang 
+    url: https://github.com/claireconglizhang
+    affiliation: University of Oregon
+    affiliation_url: https://education.uoregon.edu/qrme
+date: 02-25-2020
+output:
+  distill::distill_article:
+    self_contained: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Learn more about creating blogs with Distill at:
+# https://rstudio.github.io/distill/blog.html
+
+```
+
+
+
