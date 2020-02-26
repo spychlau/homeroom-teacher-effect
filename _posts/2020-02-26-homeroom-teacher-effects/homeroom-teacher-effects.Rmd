@@ -1,0 +1,21 @@
+---
+title: "Homeroom Teacher Effects"
+date: "2/25/2020"
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
+---
+
+(in progress...)
+
+#### Outcome variables
+
+
+#### Predictor: dummy variable of homeroom teacher status in school year 2013-14
+
+
+#### Covariates
+
+I inspect the major characteristics of these schools, teachers, students, and their parents in base-year data and use these characteristics as control variables or covariates in my analysis since they can be considered as pre-existing to wave 2 outcomes.
+

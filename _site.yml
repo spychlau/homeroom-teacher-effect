@@ -10,11 +10,11 @@ navbar:
       - text: "Home Page"
         href: "index.html"
       - text: "CEPS Dataset Inspection"
-        href: "full.html"
+        href: "ceps-data-inspection.html"
       - text: "My Sample Data"
-        href: "sample.html"
+        href: "my-sample-data.html"
       - text: "Homeroom Teacher Effects"
-        href: "hrtch.html"
+        href: "homeroom-teacher-effects.html"
   right:
     - text: "Home"
       href: index.html

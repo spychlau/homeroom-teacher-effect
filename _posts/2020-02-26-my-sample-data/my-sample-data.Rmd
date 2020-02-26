@@ -1,0 +1,276 @@
+---
+title: "My Sample Data"
+date: "2/25/2020"
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
+---
+
+```{r setup, include=F}
+pacman::p_load(rio, here, haven, tidyverse, dplyr, janitor, knitr, ggplot2, data.table, colorblindr, gghighlight, showtext, gt)
+
+opts_chunk$set(echo=F,
+               warning=F,
+               message=F,
+               comment=NA,
+               fig.align="center",
+               fig.width=10.5) 
+```
+
+
+```{r, CEPS full datasets, include=F}
+full_stu_1 <- import(here("data", "cepsw1studentEN.dta"))
+full_stu_2 <- import(here("data", "cepsw2studentEN.dta")) 
+full_prt_1 <- import(here("data", "cepsw1parentEN.dta"))
+full_prt_2 <- import(here("data", "cepsw2parentEN.dta"))
+full_tch_1 <- import(here("data", "cepsw1teacherEN.dta"))
+full_tch_2 <- import(here("data", "cepsw2teacherEN.dta"))
+full_admin_1 <- import(here("data", "cepsw1principalEN.dta")) 
+full_admin_2 <- import(here("data", "cepsw2principalEN.dta"))
+```
+
+#### Stage 1: 55 school sample 
+##### (criteria: frame 1 + publich school)
+
+In "CEPS Dataset Inspection" page, I discuss my decision of selecting 60 schools in CEPS frame 1 subsample. In these schools, 5947 students and their parents, homeroom teachers, subject teachers, and school administrators participated both waves of survey. However, I need to limit the sample schools to public schools to avoid unoberserved differences between public and non-public schools. 55 public schools with their 5473 students are trimmed from the previous sample at this stage. 
+
+```{r}
+stage1_schids <- full_admin_1 %>% 
+  filter(frame == 1 & schtype_2c == 1) %>% 
+  select(schids)
+w1_w2 <- full_stu_2 %>% 
+  filter(ids <= 19487) %>% 
+  select(frame = w2frame, ids, schids) %>% 
+  add_column(participate = "Wave 1 and 2")
+stage1_stuids <- inner_join(w1_w2, stage1_schids) 
+```
+
+```{r}
+stage1_sch <- inner_join(full_admin_1, stage1_schids)
+stage1_tch <- inner_join(full_tch_1, stage1_schids) %>% filter(grade9 == 0)
+stage1_stu <- inner_join(full_stu_1, stage1_stuids)
+stage1_prt <- inner_join(full_prt_1, stage1_stuids)
+```
+
+```{r, results="asis"}
+# 55 schools from w1 administrator dataset
+
+stage_1 <- stage1_sch %>% 
+  select(schids, fall,
+         region = ctyplace,
+         urbanicity = ctytype,
+         computers = pla16,
+         books = pla17,
+         cohort = plb0101b,
+         grade8 = plb0102b,
+         grade9 = plb0103b,
+         tch_edu1 = plc0404a,
+         tch_edu2 = plc0405a,
+         tch_up1 = plc0504,
+         tch_up2 = plc0505,
+         tch_up3 = plc0506,
+         tch_n = plc0101a) 
+stage_1[is.na(stage_1)] <- 0
+stage_1 <- stage_1 %>% 
+  mutate(fall = recode(fall, '1' = "2013 Fall", '0' = "2014 Spring"),
+         region = recode(region, '1' = "East China", '2' = "Middle China", '3' = "West China"),
+         urbanicity = recode(urbanicity, '1' = "Municipality", '2' = "Provincial Capital", '3' = "Prefecture-level Cities", '4' = "County-level Cities"),
+         enrollment = cohort+grade8+grade9,
+         tch_bachelor = (tch_edu1+tch_edu2),
+         tch_advanced = (tch_up1+tch_up2+tch_up3),na.rm=T) %>% 
+  select(schids, fall, region, urbanicity, computers, books, enrollment, tch_bachelor, tch_advanced)
+```
+
+The table below shows some characteristics for these 55 schools such as the survey time (2013 fall or 2014 spring), region (east, middle, or west China), urbanicity (5 levels), number of computers and books available to students, enrollment, number of teachers having bachelor degree and up, and number of teachers whose professional status are advanced and up.
+
+```{r}
+#55 school data full table
+DT::datatable(stage_1, fillContainer=F, options=list(pageLength=8))
+```
+
+#### Stage 2: 40 school sample
+##### (Criteria: frame 1 + public school + random/even placement to homeroom)
+
+To answer my two research questions on the causal effects of homeroom teachers on student outcomes, I intend to take advantage of a unique quality in CEPS data - random or even placement of new students to homeroom.
+
+In China, schools place new students into homerooms where they are managed by a homeroom teacher who typically follows them up till graduation. Random or even placement to homeroom in public elementary and middle schools is a policy enforced by chinese Ministry of Education, referring to sorting students into groups randomly or evenly (with equal average score) before homeroom teachers drawing lots from the student groups. However, not all the counties in the country restrictively regulate their schools, which results in some school not following the policy completely.
+
+In CEPS baseline school administrator survey, there is a question asking "(whether) Randomly or evenly assign them (new students) into different classes", while in teacher survey, the question is opposite, asking "Is the grade (you currently teach) divided into classes according to scores AT PRESENT?". To the best I can to make sure my interested student sample was indeed randomly or evenly placed, I match and compare answers from teachers and administrators and only include the schools having consistent answers. Specifically, I create potential indicating variables from w1 school administrator and teacher survey and do an interaction check to keep the schools and homerooms that have TRUE on all the two indicators below:
+random_even_w1 from administrator w1 survey with TRUE = 1;
+random_even_tch_w1 from teacher w1 survey with TRUE = 1;
+
+As a result, 40 out of 55 schools are selected (schid 64 is excluded as it only has one homeroom) at this stage. In other words, I select my sample of 4016 students from 40 public middle schools that I believe have randomly or evenly placed 7th graders into homerooms in 2013-2014 school year.
+
+```{r}
+r1 <- stage1_sch %>% 
+  select(schids,
+         random_even_w1 = ple1503)
+r1_tch <- stage1_tch %>% 
+  select(schids,
+         clsids,
+         random_even_tch_w1 = hra05) %>% 
+  mutate(random_even_tch_w1 = recode(random_even_tch_w1, '1' = "0", '2' = "1"))
+
+random_even_sch <- left_join(r1_tch, r1) %>% 
+  mutate(random1 = if_else(random_even_tch_w1 == 1 & random_even_w1 == 1, 1, 0)) %>%
+  filter(random1 == 1) %>% 
+  select(schids, 
+         random_even_placement = random1) %>% 
+  distinct() %>% 
+  filter(schids != 64)
+```
+
+
+```{r}
+#40 schools, 4016 students:
+
+stu_w1 <- inner_join(full_stu_1, stage1_stuids) %>% inner_join(stage1_schids)
+stu_w2 <- inner_join(full_stu_2, stage1_stuids) %>% inner_join(stage1_schids) 
+prt_w1 <- inner_join(full_prt_1, stage1_stuids) %>% inner_join(stage1_schids)
+prt_w2 <- inner_join(full_prt_2, stage1_stuids) %>% inner_join(stage1_schids)
+tch_w1 <- inner_join(full_tch_1, stage1_schids) %>% filter(grade9 == 0) 
+tch_w2 <- inner_join(full_tch_2, stage1_schids) 
+admin_w1 <- inner_join(full_admin_1, stage1_schids) 
+admin_w2 <- inner_join(full_admin_2, stage1_schids) 
+
+stu_1 <- inner_join(stu_w1, random_even_sch)
+stu_2 <- inner_join(stu_w2, random_even_sch)
+prt_1 <- inner_join(prt_w1, random_even_sch)
+prt_2 <- inner_join(prt_w2, random_even_sch)
+tch_1 <- inner_join(tch_w1, random_even_sch)
+tch_2 <- inner_join(tch_w2, random_even_sch)
+admin_1 <- inner_join(admin_w1, random_even_sch)
+admin_2 <- inner_join(admin_w2, random_even_sch)
+
+```
+
+```{r}
+stu_chrct <- stu_1 %>% 
+  select(ids,
+         clsids,
+         schids,
+         fall,
+         stsex,
+         stbrd,
+         single_child = stonly,
+         parent_education = stprhedu,
+         financial_3c = steco_3c,
+         financial_5c = steco_5c,
+         stdchn,
+         stdmat,
+         stdeng,
+         cog3pl) %>%
+  mutate(schids = as_factor(schids),
+         clsids = as_factor(clsids),
+         fall = recode(fall, '1' = "2013 Fall", '0' = "2014 Spring"),
+         stsex = recode(stsex, '1' = "Male", '0' = "Female"),
+         stbrd = recode(stbrd, '0' = "Commute", '1' = "Boarding"),
+         parent_education = recode(parent_education, '1' = "0", '2' = "6", '3' = "9", '4' = "12", '5' = "12", '6' = "12", '7' = "14", '8' = "16", '9' = "19"),
+         financial_3c = recode(financial_3c, '1' = "Poor", '2' = "Middle", '3' = "Rich"),
+         financial_5c = recode(financial_5c, '1' = "Very poor", '2' = "Poor", '3' = "Middle", '4' = "Rich", '5' = "Very rich")) %>% 
+  drop_na()
+```
+
+
+Next, I inspect my sample data by comparing homeroom class size and student w1 scores to check whether the two homerooms in each school are indeed equal in observable ways. Maybe need more check but as you'll see, these two checks already raised my concern. 
+
+
+```{r, fig.height = 14}
+
+#inspect class size, schids == 23, 51, 61, 101 raise concern.
+
+class_size <- stu_chrct %>% 
+  select(ids, clsids, schids, stsex, fall) %>% 
+  group_by(schids, clsids) %>% 
+  count() %>%
+  ungroup() %>%
+  add_column(class = rep(1:2, 40)) %>% 
+  mutate(class = recode(class, '1' = "A", '2' = "B"))
+
+ggplot(class_size, aes(x = fct_reorder(schids, n), y = n, fill = class))+
+  geom_col(position = "dodge", color = "white")+
+  theme_minimal()+
+  scale_fill_OkabeIto(darken = 0.1, alpha = 0.8, guide=FALSE)+
+  geom_text(aes(label = n), 
+            position = position_dodge(width = 1.2), 
+            vjust = 0.4,
+            hjust = -0.4,
+            color = "gray30")+
+  labs(x = "School ID",
+       y = NULL,
+       title = "Selected Sample School Homeroom Class Size")+
+  coord_flip()
+```
+
+```{r}
+
+#inspect whether subject scores are equal between the two homeroom classes in each school. schids == 107, 100, 99, 61, 23, surveyed in 2013 fall and 101, 88, 85 surveyed in 2014 spring raise concern.
+
+fall <- stu_chrct %>% 
+  select(schids, fall) %>% 
+  distinct() %>% 
+  filter(fall == "2013 Fall")
+
+random_chn <- left_join(stu_chrct, class_size) %>%
+  select(schids, class, stdchn) %>% 
+  group_by(schids, class) %>% 
+  summarize(Chinese_mean = round(mean(stdchn) - 60, 2)) %>% 
+  ungroup()
+random_mat <- left_join(stu_chrct, class_size) %>%
+  select(schids, class, stdmat) %>% 
+  group_by(schids, class) %>% 
+  summarize(Math_mean = round(mean(stdmat) - 60, 2)) %>% 
+  ungroup()
+random_eng <- left_join(stu_chrct, class_size) %>%
+  select(schids, class, stdeng) %>% 
+  group_by(schids, class) %>% 
+  summarize(English_mean = round(mean(stdeng) - 60, 2)) %>% 
+  ungroup()
+
+random_1 <- left_join(left_join(random_chn, random_eng), random_mat) %>% 
+  inner_join(fall) %>% 
+  pivot_longer(cols = ends_with("mean"),
+               names_to = "subject",
+               values_to = "homeroom_mean",
+               names_pattern = "(.+)_")
+
+ggplot(random_1, aes(x = schids, y = homeroom_mean, fill = class))+
+  geom_col(position = "dodge", color = "white")+
+  theme_minimal()+
+  scale_fill_brewer(palette = "Set2")+
+  coord_flip()+
+  facet_wrap(~ subject)+
+  labs(x = "Homeroom mean scores (standardized score-60)",
+       y = "School ID (two homerooms per school)",
+       title = "Inspect Whether Subject Scores Are Equal Between Two Homerooms",
+       subtitle = "(Surveyed in 2013 Fall)")+
+  theme(legend.position = "none")
+
+random_2 <- left_join(left_join(random_chn, random_eng), random_mat) %>% 
+  anti_join(fall) %>% 
+  pivot_longer(cols = ends_with("mean"),
+               names_to = "subject",
+               values_to = "homeroom_mean",
+               names_pattern = "(.+)_")
+
+ggplot(random_2, aes(x = schids, y = homeroom_mean, fill = class))+
+  geom_col(position = "dodge", color = "white")+
+  theme_minimal()+ 
+  scale_fill_brewer(palette = "Set2")+
+  coord_flip()+
+  facet_wrap(~ subject)+
+  labs(x = "Homeroom mean scores (standardized score-60)",
+       y = "School ID (two homerooms per school)",
+       title = "Inspect Whether Subject Scores Are Equal Between Two Homerooms",
+       subtitle = "(Surveyed in 2014 Spring)")+
+  theme(legend.position = "none")
+
+```
+
+Here is the point I get stuck - the plots do not answer the question whether these differences in class size and scores are significant. t-test is not feasible.
+
+#### Stage 3: I was wondering whether I need to continue refining my sample. It is already much smaller than I expect.
+
+
+
