@@ -1,0 +1,74 @@
+---
+title: "CEPS Dataset Inspection"
+date: "2/25/2020"
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
+---
+
+```{r setup, include=FALSE}
+pacman::p_load(rio, here, haven, tidyverse, dplyr, janitor, knitr, ggplot2, colorblindr, gghighlight, showtext, gt)
+
+opts_chunk$set(echo=F,
+               warning=F,
+               message=F,
+               comment=NA,
+               fig.align="center",
+               fig.width=10.5) 
+```
+
+
+China Education Panel Survey (CEPS, website: https://ceps.ruc.edu.cn/index.php?r=index/index&hl=en) is a nationally representative longitudinal survey designed by National Survey Research Center at Renmin University of China. In 2013, CEPS applied a stratified, multistage sampling design with probability proportional to size (PPS) and randomly selected a school-based, nationally representative sample of 19,487 7th- and 9th-grade students in 438 homerooms of 112 schools in 28 county-level units in mainland China. The full dataset is student-level data from students and their homeroom teachers, subject teachers, school administrators, and parents.
+
+CEPS applied a four-stage random sampling procedure: 1) select 28 county-level units from a total of 2,870 counties with PPS; 2) select 4 schools from all schools serving 7th and/or 9th grades from each sample county with PPS; 3) randomly select 2 homerooms from 7th grade and another 2 from 9th grade in each sample school; and 4) include all students attending school on the survey date in the selected homerooms. 
+
+```{r, full data}
+
+#full CEPS data inspection:
+
+full_stu_1 <- import(here("data", "cepsw1studentEN.dta"))
+full_stu_2 <- import(here("data", "cepsw2studentEN.dta")) 
+full_prt_1 <- import(here("data", "cepsw1parentEN.dta"))
+full_prt_2 <- import(here("data", "cepsw2parentEN.dta"))
+full_tch_1 <- import(here("data", "cepsw1teacherEN.dta"))
+full_tch_2 <- import(here("data", "cepsw2teacherEN.dta"))
+full_admin_1 <- import(here("data", "cepsw1principalEN.dta")) 
+full_admin_2 <- import(here("data", "cepsw2principalEN.dta"))
+
+w1_only <- full_stu_1 %>%
+  filter(grade9 == 1) %>% 
+  select(frame, ids, schids) %>% 
+  add_column(participate = "Wave 1 only")
+
+w2_only <- full_stu_2 %>% 
+  filter(ids > 19487) %>% 
+  select(frame = w2frame, ids, schids) %>% 
+  add_column(participate = "Wave 2 only")
+
+w1_w2 <- full_stu_2 %>% 
+  filter(ids <= 19487) %>% 
+  select(frame = w2frame, ids, schids) %>% 
+  add_column(participate = "Wave 1 and 2")
+
+full_id <- full_join(full_join(w1_only, w2_only), w1_w2) %>% 
+  group_by(participate, frame) %>% 
+  count() %>% 
+  mutate(Frame = as_factor(frame)) %>% 
+  ungroup()
+
+ggplot(full_id, aes(x = participate, y = n, fill = Frame))+
+  geom_col(position = "dodge", color = "white")+
+  theme_minimal()+
+  scale_fill_OkabeIto(darken = 0.1, alpha = 0.8)+
+  geom_text(aes(label = n), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.25,
+            color = "gray30")+
+  labs(x = "Wave(s) Student Participated",
+       y = "Number of Students",
+       title = "A Glance at Student Number in CEPS Full Data",
+       caption = "Frame 1: 15 counties from 2870 in nation; Frame 2: 3 counties from 31 in Shanghai area; Frame 3: 10 counties from 120 migrant workers concentrated counties")
+```
+
+Notice that the 112 schools selected into the full data come from three sampling frames: frame 1 contains 6o schools from 15 counties out of 2870 in the nation, frame 2 contains 3 counties out of 31 in Shanghai area, and frame 3 contains 10 counties from 120 migrant workers concentrated counties. In other words, frame 2 and 3 are supplementary subsamples serving for particular study purpose focusing on student subgroups in Shanghai and from migrant worker families. However, for the generalization purpose of my research, I am more interested in schools from the core sampling frame - frame 1. Please find more details in "My Sample Data" page.

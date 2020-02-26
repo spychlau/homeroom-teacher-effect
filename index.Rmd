@@ -1,5 +1,37 @@
 ---
-title: "My Data Management Blog"
+title: "The Effect of Homeroom Teacher on Student Outcomes"
+subtitle: "Claire Zhang's Data Management Blog"
 site: distill::distill_website
 listing: posts
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate
 ---
+
+Researchers make different decisions during data management process to deal with many issues such as missing data and outliers, trade-off between type I and II errors, coding and weighting, etc., before getting hands on sample data and conducting analysis. Why and how these decisions have been made remain largely invisible in reports and articles. During my first data management experience as a researcher - trimming my sample data from the first nationally representative longitudinal data in Chinese secondary education, the China Education Panel Survey, I feel it necessary to openly discuss the issues and decisions involved in each step of my data management process in hopes of collecting feedback and insights from my colleagues and audience.
+
+***Purpose of this Site***
+
+This site serves as a *dairy* of visualization, communication, and discussion of the data management desicions I have made to get the sample that can meet my research goal and better answer my research questions. 
+
+***Research Questions***
+
+My research goal is to investigate the causal effect of homeroom teachers (a special teacher role in China school system, who is responsible for not only subject teaching, but also critical education activities complementary to student content learning) on student outcomes and whether, why, and how these teachers improve students' learning and well-being at school. 
+
+To understand the two roles homeroom teachers take on in Chinese educational system - subject teaching and homeroom management, I intend to answer two fundamental questions:
+
+1. As subject teachers, whether homeroom teachers improve student score on the subjects they teach more than their counterparts - same subject teachers who are not homeroom teachers?
+
+2. As homeroom managers, whether homeroom teachers positively impact homeroom students' overall academic, behavioral, and psychological outcomes?
+
+***Literature Review***
+
+(in progress...)
+
+**CEPS Dataset Investigation** 
+
+**My Sample Data**
+
+**Homeroom Teacher Effect**
+

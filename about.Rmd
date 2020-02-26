@@ -4,6 +4,3 @@ description: |
   The purpose of this blog is recording the lengthy, challenging, laborious, and less rewarding data management process accompaning my research on CEPS data.
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
-```

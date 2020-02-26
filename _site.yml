@@ -5,29 +5,24 @@ description: |
 output_dir: "docs"
 navbar:
   left:
-    - text: "Introduction"
-      href: "intro.html"
-    - text: "CEPS Full Dataset"
-      href: "full.html"
-    - text: "Trimming Sample from CEPS"
-      href: "sample.html"
-    - text: "A Bit About My Research"
-      href: "hrtch.html"
+   - text: "Menu"
+     menu:
+      - text: "Home Page"
+        href: "index.html"
+      - text: "CEPS Dataset Inspection"
+        href: "full.html"
+      - text: "My Sample Data"
+        href: "sample.html"
+      - text: "Homeroom Teacher Effects"
+        href: "hrtch.html"
   right:
     - text: "Home"
       href: index.html
-    - text: "About Blog"
-      href: about.html
     - text: "About Author"
       href: about_me.html
     - icon: fa fa-github
       href: https://github.com/claireconglizhang/EDLD610_2020W
-output: 
-  distill::distill_article:
-    css: style.distill-site-nav {
-      color: rgba(255, 255, 255, 0.8);
-      background-color: #FF5FDD;
-      font-size: 15px;
-      font-weight: 300;
-      }
-
+output:
+  html_document:
+    theme: cosmo
+    highlight: textmate

@@ -1,7 +1,7 @@
 ---
 title: "Welcome to My Data Management Blog"
 description: |
-  Welcome to my data management blog. 
+  Welcome to my data management blog. The purpose of this blog is recording the lengthy, challenging, laborious, and less rewarding data management process accompaning my research on CEPS data.
 author:
   - name: Claire Congli Zhang 
     url: https://github.com/claireconglizhang

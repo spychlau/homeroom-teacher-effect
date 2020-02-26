@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>My Sample Data</title>
+
+<script src="site_libs/jquery-1.12.4/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5/htmlwidgets.js"></script>
+<link href="site_libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
+<script src="site_libs/datatables-binding-0.9/datatables.js"></script>
+<link href="site_libs/dt-core-1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+<link href="site_libs/dt-core-1.10.19/css/jquery.dataTables.extra.css" rel="stylesheet" />
+<script src="site_libs/dt-core-1.10.19/js/jquery.dataTables.min.js"></script>
+<link href="site_libs/crosstalk-1.0.0/css/crosstalk.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.0.0/js/crosstalk.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Menu
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="index.html">Home Page</a>
+    </li>
+    <li>
+      <a href="full.html">CEPS Dataset Inspection</a>
+    </li>
+    <li>
+      <a href="sample.html">My Sample Data</a>
+    </li>
+    <li>
+      <a href="hrtch.html">Homeroom Teacher Effects</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about_me.html">About Author</a>
+</li>
+<li>
+  <a href="https://github.com/claireconglizhang/EDLD610_2020W">
+    <span class="fa fa fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">My Sample Data</h1>
+<h4 class="date">2/25/2020</h4>
+
+</div>
+
+
+<div id="stage-1-55-school-sample" class="section level4">
+<h4>Stage 1: 55 school sample</h4>
+<div id="criteria-frame-1-publich-school" class="section level5">
+<h5>(criteria: frame 1 + publich school)</h5>
+<p>In “CEPS Dataset Inspection” page, I discuss my decision of selecting 60 schools in CEPS frame 1 subsample. In these schools, 5947 students and their parents, homeroom teachers, subject teachers, and school administrators participated both waves of survey. However, I need to limit the sample schools to public schools to avoid unoberserved differences between public and non-public schools. 55 public schools with their 5473 students are trimmed from the previous sample at this stage.</p>
+<p>The table below shows some characteristics for these 55 schools such as the survey time (2013 fall or 2014 spring), region (east, middle, or west China), urbanicity (5 levels), number of computers and books available to students, enrollment, number of teachers having bachelor degree and up, and number of teachers whose professional status are advanced and up.</p>
+<div id="htmlwidget-beb8884617956db264dd" style="width:100%;height:auto;" class="datatables html-widget"></div>
+<script type="application/json" data-for="htmlwidget-beb8884617956db264dd">{"x":{"filter":"none","fillContainer":false,"data":[["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35","36","37","38","39","40","41","42","43","44","45","46","47","48","49","50","51","52","53","54","55"],[9,10,11,12,13,14,15,16,21,22,23,24,45,46,47,48,49,50,51,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,75,76,81,82,83,85,86,87,88,97,98,99,100,101,103,104,105,106,107,108],["2014 Spring","2014 Spring","2014 Spring","2014 Spring","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2014 Spring","2014 Spring","2014 Spring","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2014 Spring","2014 Spring","2014 Spring","2014 Spring","2013 Fall","2013 Fall","2013 Fall","2013 Fall","2014 Spring","2014 Spring","2014 Spring","2013 Fall","2013 Fall","2013 Fall","2013 Fall"],["East China","East China","East China","East China","Middle China","Middle China","Middle China","Middle China","Middle China","Middle China","Middle China","Middle China","East China","East China","East China","East China","East China","East China","East China","East China","East China","East China","East China","Middle China","Middle China","Middle China","Middle China","East China","East China","East China","East China","Middle China","Middle China","Middle China","Middle China","Middle China","Middle China","East China","East China","East China","East China","East China","East China","East China","West China","West China","West China","West China","West China","West China","West China","West China","West China","West China","West China"],["Prefecture-level Cities","Prefecture-level Cities","Prefecture-level Cities","Prefecture-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","Prefecture-level Cities","Prefecture-level Cities","Prefecture-level Cities","Prefecture-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","Provincial Capital","Provincial Capital","Provincial Capital","Provincial Capital","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","Prefecture-level Cities","Prefecture-level Cities","Prefecture-level Cities","Prefecture-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities","County-level Cities"],[240,180,140,50,110,100,200,60,40,40,70,50,256,60,400,104,120,72,140,180,90,50,50,420,200,40,32,180,120,114,155,10,40,0,0,30,30,30,30,0,200,50,0,30,20,12,35,0,50,0,180,644,144,60,50],[114100,43000,65000,19344,270000,999999,60000,21000,9410,12000,20000,17000,72000,200000,82098,30100,35520,27000,56167,100000,220000,21572,1200,110000,32000,19000,850,82389,106611,44100,89797,20603,32000,25700,4700,26000,30000,16800,25000,40000,30000,50000,0,20000,15630,22000,4000,22000,20000,16000,60000,140000,58429,30000,16000],[3535,1846,2056,425,773,1376,1242,666,1285,183,1010,914,2256,724,2600,902,1084,865,1239,1336,1342,551,287,1530,2331,501,110,2059,1248,960,1973,460,808,663,254,755,875,456,731,402,1467,976,207,423,199,502,500,217,1156,1112,2925,1238,290,1483,832],[0,176,178,53,18,83,66,42,73,29,91,95,138,105,148,67,87,71,88,103,99,6,0,80,90,39,26,0,100,55,121,20,70,0,13,20,1,42,70,0,90,54,12,28,25,29,20,15,68,48,69,0,73,70,37],[0,152,157,50,23,54,46,30,89,26,117,81,111,95,154,65,79,61,92,79,98,27,16,87,73,44,21,92,21,40,77,8,84,41,21,52,61,39,57,43,58,35,10,25,18,53,8,12,69,18,81,50,30,26,20]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>schids<\/th>\n      <th>fall<\/th>\n      <th>region<\/th>\n      <th>urbanicity<\/th>\n      <th>computers<\/th>\n      <th>books<\/th>\n      <th>enrollment<\/th>\n      <th>tch_bachelor<\/th>\n      <th>tch_advanced<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"pageLength":8,"columnDefs":[{"className":"dt-right","targets":[1,5,6,7,8,9]},{"orderable":false,"targets":0}],"order":[],"autoWidth":false,"orderClasses":false,"lengthMenu":[8,10,25,50,100]}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<div id="stage-2-40-school-sample" class="section level4">
+<h4>Stage 2: 40 school sample</h4>
+<div id="criteria-frame-1-public-school-randomeven-placement-to-homeroom" class="section level5">
+<h5>(Criteria: frame 1 + public school + random/even placement to homeroom)</h5>
+<p>To answer my two research questions on the causal effects of homeroom teachers on student outcomes, I intend to take advantage of a unique quality in CEPS data - random or even placement of new students to homeroom.</p>
+<p>In China, schools place new students into homerooms where they are managed by a homeroom teacher who typically follows them up till graduation. Random or even placement to homeroom in public elementary and middle schools is a policy enforced by chinese Ministry of Education, referring to sorting students into groups randomly or evenly (with equal average score) before homeroom teachers drawing lots from the student groups. However, not all the counties in the country restrictively regulate their schools, which results in some school not following the policy completely.</p>
+<p>In CEPS baseline school administrator survey, there is a question asking “(whether) Randomly or evenly assign them (new students) into different classes”, while in teacher survey, the question is opposite, asking “Is the grade (you currently teach) divided into classes according to scores AT PRESENT?”. To the best I can to make sure my interested student sample was indeed randomly or evenly placed, I match and compare answers from teachers and administrators and only include the schools having consistent answers. Specifically, I create potential indicating variables from w1 school administrator and teacher survey and do an interaction check to keep the schools and homerooms that have TRUE on all the two indicators below: random_even_w1 from administrator w1 survey with TRUE = 1; random_even_tch_w1 from teacher w1 survey with TRUE = 1;</p>
+<p>As a result, 40 out of 55 schools are selected (schid 64 is excluded as it only has one homeroom) at this stage. In other words, I select my sample of 4016 students from 40 public middle schools that I believe have randomly or evenly placed 7th graders into homerooms in 2013-2014 school year.</p>
+<p>Next, I inspect my sample data by comparing homeroom class size and student w1 scores to check whether the two homerooms in each school are indeed equal in observable ways. Maybe need more check but as you’ll see, these two checks already raised my concern.</p>
+<p><img src="sample_files/figure-html/unnamed-chunk-8-1.png" width="1008" style="display: block; margin: auto;" /></p>
+<p><img src="sample_files/figure-html/unnamed-chunk-9-1.png" width="1008" style="display: block; margin: auto;" /><img src="sample_files/figure-html/unnamed-chunk-9-2.png" width="1008" style="display: block; margin: auto;" /></p>
+<p>Here is the point I get stuck - the plots do not answer the question whether these differences in class size and scores are significant. t-test is not feasible.</p>
+</div>
+</div>
+<div id="stage-3-i-was-wondering-whether-i-need-to-continue-refining-my-sample.-it-is-already-much-smaller-than-i-expect." class="section level4">
+<h4>Stage 3: I was wondering whether I need to continue refining my sample. It is already much smaller than I expect.</h4>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
