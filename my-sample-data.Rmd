@@ -16,6 +16,8 @@ opts_chunk$set(echo=F,
                comment=NA,
                fig.align="center",
                fig.width=10.5) 
+myblue = "#5ab4ac"
+mybrown = "#8c510a"
 ```
 
 
@@ -60,26 +62,25 @@ stage_1 <- stage1_sch %>%
   select(schids, fall,
          region = ctyplace,
          urbanicity = ctytype,
+         average_edu = ctyedu,
+         funding_per_student = pla18,
          computers = pla16,
          books = pla17,
          cohort = plb0101b,
-         grade8 = plb0102b,
-         grade9 = plb0103b,
          tch_edu1 = plc0404a,
          tch_edu2 = plc0405a,
          tch_up1 = plc0504,
          tch_up2 = plc0505,
          tch_up3 = plc0506,
-         tch_n = plc0101a) 
-stage_1[is.na(stage_1)] <- 0
+         tch_number = plc0101a,
+         tch_salary_senior = plc0602) 
 stage_1 <- stage_1 %>% 
   mutate(fall = recode(fall, '1' = "2013 Fall", '0' = "2014 Spring"),
          region = recode(region, '1' = "East China", '2' = "Middle China", '3' = "West China"),
          urbanicity = recode(urbanicity, '1' = "Municipality", '2' = "Provincial Capital", '3' = "Prefecture-level Cities", '4' = "County-level Cities"),
-         enrollment = cohort+grade8+grade9,
          tch_bachelor = (tch_edu1+tch_edu2),
          tch_advanced = (tch_up1+tch_up2+tch_up3),na.rm=T) %>% 
-  select(schids, fall, region, urbanicity, computers, books, enrollment, tch_bachelor, tch_advanced)
+  select(schids, fall, region, urbanicity, average_edu, funding_per_student, computers, books, cohort, tch_bachelor, tch_advanced, tch_number, tch_salary_senior)
 ```
 
 The table below shows some characteristics for these 55 schools such as the survey time (2013 fall or 2014 spring), region (east, middle, or west China), urbanicity (5 levels), number of computers and books available to students, enrollment, number of teachers having bachelor degree and up, and number of teachers whose professional status are advanced and up.
@@ -167,11 +168,78 @@ stu_chrct <- stu_1 %>%
          stsex = recode(stsex, '1' = "Male", '0' = "Female"),
          stbrd = recode(stbrd, '0' = "Commute", '1' = "Boarding"),
          parent_education = recode(parent_education, '1' = "0", '2' = "6", '3' = "9", '4' = "12", '5' = "12", '6' = "12", '7' = "14", '8' = "16", '9' = "19"),
+         parent_education = as.numeric(parent_education),
          financial_3c = recode(financial_3c, '1' = "Poor", '2' = "Middle", '3' = "Rich"),
          financial_5c = recode(financial_5c, '1' = "Very poor", '2' = "Poor", '3' = "Middle", '4' = "Rich", '5' = "Very rich")) %>% 
   drop_na()
 ```
 
+Discrete and continuous characteristics of sample schools:
+
+```{r}
+sch_chrct <- inner_join(stage_1, random_even_sch)
+  
+ggplot(sch_chrct, aes(x = factor(urbanicity, levels = c("Municipality", "Provincial Capital", "Prefecture-level Cities", "County-level Cities"))))+
+  geom_bar(fill = myblue, alpha = 0.9)+
+  facet_wrap(~region)+
+  coord_flip()+
+  theme_minimal()+
+  labs(x = "Urbanicity",
+       y = "Number of Schools",
+       title = "Location of Schools with Random/Even Student Placement",
+       subtitle = "(N = 40)")
+
+sch_chrct_numeric <- sch_chrct %>% 
+  select(County_education = average_edu,
+         Funding_per_student = funding_per_student,
+         Computers_for_students = computers, 
+         Books_for_students = books,
+         Cohort = cohort,
+         Teacher_number = tch_number) %>% 
+  drop_na()
+
+corr_sch <- round(cor(sch_chrct_numeric), 1)
+
+ggcorrplot::ggcorrplot(corr_sch, hc.order = T,
+           type = "lower",
+           lab = T, lab_size = 3,
+           method = "circle",
+           colors = c(myblue, "white", mybrown),
+           title = "Correlations Between School Characteristics", 
+           ggtheme = theme_bw)
+```
+
+Discrete and continuous characteristics of sample students:
+
+```{r}
+ggplot(stu_chrct, aes(x = factor(financial_5c, levels = c("Very poor", "Poor", "Middle", "Rich", "Very rich")), fill = stsex))+
+  geom_bar(position = "dodge", color = "white")+
+  facet_wrap(~stbrd)+
+  coord_flip()+
+  theme_minimal()+
+  labs(x = "Financial Condition",
+       y = "Number of Students",
+       title = "Boarding VS Commuting Students",
+       subtitle = "(N = 4016)")
+
+stu_chrct_numeric <- stu_chrct %>% 
+  select(Parent_education = parent_education,
+         Chinese_score = stdchn,
+         Math_score = stdmat,
+         English_score = stdeng,
+         Cognitive_score = cog3pl) %>% 
+  drop_na()
+
+corr_stu <- round(cor(stu_chrct_numeric), 1)
+
+ggcorrplot::ggcorrplot(corr_stu, hc.order = T,
+           type = "lower",
+           lab = T, lab_size = 3,
+           method = "circle",
+           colors = c(myblue, "white", mybrown),
+           title = "Correlations Between Parent Education and Test Scores", 
+           ggtheme = theme_bw)
+```
 
 Next, I inspect my sample data by comparing homeroom class size and student w1 scores to check whether the two homerooms in each school are indeed equal in observable ways. Maybe need more check but as you'll see, these two checks already raised my concern. 
 
@@ -187,7 +255,7 @@ class_size <- stu_chrct %>%
   ungroup() %>%
   add_column(class = rep(1:2, 40)) %>% 
   mutate(class = recode(class, '1' = "A", '2' = "B"))
-
+theme_set(theme_bw())
 ggplot(class_size, aes(x = fct_reorder(schids, n), y = n, fill = class))+
   geom_col(position = "dodge", color = "white")+
   theme_minimal()+

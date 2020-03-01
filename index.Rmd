@@ -17,13 +17,10 @@ This site serves as a *dairy* of visualization, communication, and discussion of
 
 ***Research Questions***
 
-My research goal is to investigate the causal effect of homeroom teachers (a special teacher role in China school system, who is responsible for not only subject teaching, but also critical education activities complementary to student content learning) on student outcomes and whether, why, and how these teachers improve students' learning and well-being at school. 
+1. Whether homeroom teachers having positive relationship with students improve students’ learning manifested by students’ larger score gain on the subjects they teach over others?
 
-To understand the two roles homeroom teachers take on in Chinese educational system - subject teaching and homeroom management, I intend to answer two fundamental questions:
+2. Whether homeroom teachers having positive relationship with students improve students' overall academic, behavioral, and psychological outcomes over time?
 
-1. As subject teachers, whether homeroom teachers improve student score on the subjects they teach more than their counterparts - same subject teachers who are not homeroom teachers?
-
-2. As homeroom managers, whether homeroom teachers positively impact homeroom students' overall academic, behavioral, and psychological outcomes?
 
 ***Literature Review***
 
