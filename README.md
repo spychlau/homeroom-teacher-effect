@@ -1,1 +1,1 @@
-EDLD610_2020W
+This is my data management blog for research project "The Impact of Homeroom Teachers on Student Outcomes"
