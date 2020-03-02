@@ -180,7 +180,7 @@ Discrete and continuous characteristics of sample schools:
 sch_chrct <- inner_join(stage_1, random_even_sch)
   
 ggplot(sch_chrct, aes(x = factor(urbanicity, levels = c("Municipality", "Provincial Capital", "Prefecture-level Cities", "County-level Cities"))))+
-  geom_bar(fill = myblue, alpha = 0.9)+
+  geom_bar(fill = myblue, width = 0.5, alpha = 0.9)+
   facet_wrap(~region)+
   coord_flip()+
   theme_minimal()+
@@ -339,6 +339,36 @@ ggplot(random_2, aes(x = schids, y = homeroom_mean, fill = class))+
 Here is the point I get stuck - the plots do not answer the question whether these differences in class size and scores are significant. t-test is not feasible.
 
 #### Stage 3: I was wondering whether I need to continue refining my sample. It is already much smaller than I expect.
+
+
+## New thoughts:
+
+#### Keep all schools from full data and only use one criterion - random/even assignment
+
+reason 1: I only have to satisfy one exogenous condition: random/even assignment of students to homerooms, which will effectively eliminate students' self-selection to homeroom teacher and allow me to examine homeroom teacher causal effect.
+
+reason 2: my predictor (independent variable) is positive advisory teacher-student relationship, which doesn't necessarily defer from public to private school, comute student to boarding students. In other words, I care less about how these advisory programs work, I care more about whether the positive relationship is achieved.
+
+Let me apply only one criterion - random/even assignment -  to my original 112 schools, 9449 students and see what my sample will look like:
+
+```{r}
+random_criterion <- stage1_sch %>% 
+  select(schids,
+         random_even_w1 = ple1503)
+r1_tch <- stage1_tch %>% 
+  select(schids,
+         clsids,
+         random_even_tch_w1 = hra05) %>% 
+  mutate(random_even_tch_w1 = recode(random_even_tch_w1, '1' = "0", '2' = "1"))
+
+random_even_sch <- left_join(r1_tch, r1) %>% 
+  mutate(random1 = if_else(random_even_tch_w1 == 1 & random_even_w1 == 1, 1, 0)) %>%
+  filter(random1 == 1) %>% 
+  select(schids, 
+         random_even_placement = random1) %>% 
+  distinct() %>% 
+  filter(schids != 64)
+```
 
 
 

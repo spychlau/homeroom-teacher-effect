@@ -1,5 +1,5 @@
 ---
-title: "The Effect of Homeroom Teacher on Student Outcomes"
+title: "The Impact of Homeroom Teacher on Student Outcomes"
 subtitle: "Claire Zhang's Data Management Blog"
 site: distill::distill_website
 listing: posts
@@ -26,8 +26,8 @@ This site serves as a *dairy* of visualization, communication, and discussion of
 
 (in progress...)
 
-**CEPS Dataset Inspection** 
+[**CEPS Dataset Inspection**](https://claireconglizhang.github.io/EDLD610_2020W/ceps-data-inspection.html)
 
-**My Sample Data**
+[**My Sample Data**](https://claireconglizhang.github.io/EDLD610_2020W/my-sample-data.html)
 
-**Homeroom Teacher Effect**
+[**Homeroom Teacher Effect**](https://claireconglizhang.github.io/EDLD610_2020W/homeroom-teacher-effects.html)
