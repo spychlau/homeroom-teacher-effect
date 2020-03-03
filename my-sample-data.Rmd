@@ -5,6 +5,8 @@ output:
   html_document:
     theme: cosmo
     highlight: textmate
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=F}
@@ -88,6 +90,11 @@ The table below shows some characteristics for these 55 schools such as the surv
 ```{r}
 #55 school data full table
 DT::datatable(stage_1, fillContainer=F, options=list(pageLength=8))
+
+#Very cool table! I love the interactive features. For ease of reading, I would suggest to rename the columns, give it a title (and maybe subtitle and caption).
+#Is it possible to change the font? If you publish it as a blogentry you could have all your font be Times New Roman, but the default is something else (same for the flexdashboard)
+#Just looking ahead, Imatching fonts would be aesthetically cool
+#Also, can you take away the row numbers as the first column? Once you use the interactive features they are out of order anyways
 ```
 
 #### Stage 2: 40 school sample
@@ -189,6 +196,11 @@ ggplot(sch_chrct, aes(x = factor(urbanicity, levels = c("Municipality", "Provinc
        title = "Location of Schools with Random/Even Student Placement",
        subtitle = "(N = 40)")
 
+#I have a few suggestions about this plot: 
+#Can you use a qualitative color palette for either one of your categories?
+#Can you increase the distance between the facets? Without looking at the code I didn't even realize they are different facets because they blend into each other
+#I wonder if facet wrapping is the right thing to do because privincial and prefecture schools do not exist in middle and west China, so you have a lot of empty space in this plot I think I would plot east China separately and then present all plots together
+
 sch_chrct_numeric <- sch_chrct %>% 
   select(County_education = average_edu,
          Funding_per_student = funding_per_student,
@@ -207,6 +219,8 @@ ggcorrplot::ggcorrplot(corr_sch, hc.order = T,
            colors = c(myblue, "white", mybrown),
            title = "Correlations Between School Characteristics", 
            ggtheme = theme_bw)
+
+#I very much like this plot! THe only suggestion I have is to make the variable names prettier (remove the underscores) and give the legend a more elaborate name (e. Pearson correlations)
 ```
 
 Discrete and continuous characteristics of sample students:
@@ -221,6 +235,9 @@ ggplot(stu_chrct, aes(x = factor(financial_5c, levels = c("Very poor", "Poor", "
        y = "Number of Students",
        title = "Boarding VS Commuting Students",
        subtitle = "(N = 4016)")
+
+#Cool plot, very informative! 
+#Could you remove the title for the y-axis? Rich and poor are pretty self-explanatory and you can take it up in the subtitle too (something like "Number of students (total) by financial condition)
 
 stu_chrct_numeric <- stu_chrct %>% 
   select(Parent_education = parent_education,
@@ -239,6 +256,10 @@ ggcorrplot::ggcorrplot(corr_stu, hc.order = T,
            colors = c(myblue, "white", mybrown),
            title = "Correlations Between Parent Education and Test Scores", 
            ggtheme = theme_bw)
+
+#Again, very informative and interesting!
+#I find the title somehow misleading for me. That might just be something very subjective and if you don't understand what I men, please feel free to ignore my comment
+#With that title I would expect something like three scatterplots for each test and parental education. But that contrast (testscores on the one hand and parental education on the other) does not get communicated in a corr matrix that treats all variables equally
 ```
 
 Next, I inspect my sample data by comparing homeroom class size and student w1 scores to check whether the two homerooms in each school are indeed equal in observable ways. Maybe need more check but as you'll see, these two checks already raised my concern. 
@@ -269,6 +290,10 @@ ggplot(class_size, aes(x = fct_reorder(schids, n), y = n, fill = class))+
        y = NULL,
        title = "Selected Sample School Homeroom Class Size")+
   coord_flip()
+
+#Uuh, there is so much data in this plot! I like that you order it according to class size but I think the number of schools is too large for this.
+#Since you fill it with class anyways, could you just facet_wrap for class alternatively?
+#Or you focus on a selection of schools based on some prior consideration
 ```
 
 ```{r}
@@ -315,6 +340,9 @@ ggplot(random_1, aes(x = schids, y = homeroom_mean, fill = class))+
        subtitle = "(Surveyed in 2013 Fall)")+
   theme(legend.position = "none")
 
+#Again, this is too much data for me. I cannot recognize any trends or highlights in it. What are the two homerooms you compare in this plot? Is that the color? You could use the subtitle or add a caption to explain what the color means
+#If you compare two homerooms, an aletrnative could be to calculate the difference and plot that. You could then only display the top ten schools with the largest difference
+
 random_2 <- left_join(left_join(random_chn, random_eng), random_mat) %>% 
   anti_join(fall) %>% 
   pivot_longer(cols = ends_with("mean"),
@@ -334,9 +362,12 @@ ggplot(random_2, aes(x = schids, y = homeroom_mean, fill = class))+
        subtitle = "(Surveyed in 2014 Spring)")+
   theme(legend.position = "none")
 
+#I think random selection is a neat way to focus on a smaller sample. However, I would only use it if it corresponds to what you want to say with that plot. If your question is just explanatory (what are the differences like?) random selection makes sense. If you want to focus on what causes difference, selecting the extremes (those with largest and smallest differences) would be more suitable.
+
 ```
 
 Here is the point I get stuck - the plots do not answer the question whether these differences in class size and scores are significant. t-test is not feasible.
+
 
 #### Stage 3: I was wondering whether I need to continue refining my sample. It is already much smaller than I expect.
 
